@@ -3,17 +3,16 @@ package utils
 import (
 	"blogo/global"
 	"blogo/models"
-	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 )
 
 var jwtSecret = []byte(global.CONF.Jwt.Secret) // jwtSecret
 
-func GetToken(userID int, userName string) (string, error) { // 生成Token，返回Encoded jwt
+func GetToken(userID int, userName string) (string, int64, error) { // 生成Token，返回Encoded jwt，和过期时间
 	expireTime := time.Now().Add(time.Duration(global.CONF.Jwt.ExpireTime) * time.Second)
 	claims := &models.Claims{
-		UserID:   userID,
+		UserID:   userID, // FIXME: 无法取得UserID
 		UserName: userName,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(), // 过期时间
@@ -21,24 +20,18 @@ func GetToken(userID int, userName string) (string, error) { // 生成Token，�
 		},
 	}
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(jwtSecret)
-	if err != nil {
-		return "ERROR", err
-	}
-	return token, nil
+	return token, expireTime.Unix(), err
 }
 
-func VerifyToken(tokenString string) (string, error) { //验证Token，接收一个Encoded jwt，返回UserName
-	if tokenString == "" {
-		return "ERROR", errors.New("tokenString is empty")
-	}
+func VerifyToken(tokenString string) (*models.Claims, error) { //验证Token，接收一个Encoded jwt，返回UserID和UserName
 	claims := &models.Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (i interface{}, err error) {
 		return jwtSecret, nil
 	})
 	if err != nil || !token.Valid {
-		return "ERROR", err
+		return nil, err
 	}
-	return claims.UserName, nil
+	return claims, nil
 }
 
 /*
@@ -60,7 +53,7 @@ func yourfunc() {
 	})
     r.GET("/ver", func(c *gin.Context) {
         tokenString := c.GetHeader("Authorization")
-        userName, err := verifyToken(tokenString)
+        userID, userName, err := verifyToken(tokenString)
         if err != nil {
             fmt.Println(err)
             c.JSON(401, gin.H{
@@ -72,7 +65,7 @@ func yourfunc() {
         c.JSON(200, gin.H{
             "Info": "验证成功",
         })
-        fmt.Println(userName)
+        fmt.Println(userID, userName)
     })
     r.Run(":8080")
 }

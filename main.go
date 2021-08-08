@@ -15,6 +15,8 @@ func init() {
 func main() {
 	db, _ := global.GORM.DB()
 
+	setup.Routers().Run(":8080")
+
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
