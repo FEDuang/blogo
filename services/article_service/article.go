@@ -23,7 +23,7 @@ func AddArticle(data map[string]interface{}) error {
 }
 
 // DeleteArticle delete a single article
-func DeleteArticle(id int) error {
+func DeleteArticle(id uint) error {
 	if err := global.GORM.Where("id = ?", id).Delete(&(models.Article{})).Error; err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func DeleteArticle(id int) error {
 }
 
 // EditArticle modify a single article
-func EditArticle(id int, data interface{}) error {
+func EditArticle(id uint, data interface{}) error {
 	if err := global.GORM.Model(&(models.Article{})).Where(" id  = ? AND deleted_on = ? ", id, 0).Updates(data).Error; err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func EditArticle(id int, data interface{}) error {
 }
 
 // GetArticle Get a single article based on ID
-func GetArticle(id int) (*models.Article, error) {
+func GetArticle(id uint) (*models.Article, error) {
 	var article models.Article
 	err := global.GORM.Where("id = ? AND deleted_on = ?", id, 0).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -72,7 +72,7 @@ func GetArticleTotal(maps interface{}) (int64, error) {
 }
 
 // ExistArticleByID checks if an article exists based on ID
-func ExistArticleByID(id int) (bool, error) {
+func ExistArticleByID(id uint) (bool, error) {
 	var article models.Article
 	err := global.GORM.Select("id").Where("id =? AND deleted_on = ?", id, 0).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {

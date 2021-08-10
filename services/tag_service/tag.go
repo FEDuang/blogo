@@ -18,7 +18,7 @@ func AddTag(name string) error {
 }
 
 // DeleteTag delete a tag
-func DeleteTag(id int) error {
+func DeleteTag(id uint) error {
 	if err := global.GORM.Where("id = ?", id).Delete(&models.Tag{}).Error; err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func DeleteTag(id int) error {
 }
 
 // ExistTagByID determines whether a Tag exists based on the ID
-func ExistTagByID(id int) (bool, error) {
+func ExistTagByID(id uint) (bool, error) {
 	var tag models.Tag
 	err := global.GORM.Select("id").Where("id = ? AND deleted_on = ?", id, 0).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
