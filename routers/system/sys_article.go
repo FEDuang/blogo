@@ -20,6 +20,9 @@ func (s *ArticleRouter) InitArticleRouter(Router *gin.RouterGroup) {
 			api.ApiGroupApp.SystemApiGroup.PublishArticle(&response.GinContextE{C: c})
 		})
 		systemApi.POST("/updateArticle")
+		systemApi.POST("/deleteArticle", func(c *gin.Context) {
+			api.ApiGroupApp.SystemApiGroup.DeleteArticle(&response.GinContextE{C: c})
+		})
 		systemApi.POST("/recoverArticle")
 		systemApi.POST("/listArticleTags")
 	}

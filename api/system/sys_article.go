@@ -31,3 +31,19 @@ func (a *ArticleApi) PublishArticle(c *response.GinContextE) {
 	}
 	c.Ok(0)
 }
+
+func (a *ArticleApi) DeleteArticle(c *response.GinContextE) {
+	var deleteArticleForm request.DeleteArticleForm
+	//绑定参数
+	err := c.C.ShouldBindJSON(&deleteArticleForm)
+	if err != nil {
+		c.Response(http.StatusBadRequest, response.API_ERROR, "", nil)
+		return
+	}
+	// 删除数据库文章
+	if article_service.DeleteArticle(deleteArticleForm.ArticleId) != nil {
+		c.FailWithData(1, nil)
+		return
+	}
+	c.Ok(0)
+}
