@@ -9,9 +9,9 @@ type AddArticleForm struct {
 }
 
 type PublishArticleForm struct {
-	ArticleId uint `json:"articleId" binding:"require"`
+	ArticleId uint `json:"articleId,string" valid:"require"`
 }
 
 type DeleteArticleForm struct {
-	ArticleId uint `json:"articleId" binding:"require"`
+	ArticleId uint `json:"articleId,string" valid:"require"`
 }
