@@ -12,24 +12,25 @@ type ArticleApi struct {
 
 func (a *ArticleApi) PublishArticle(c *response.GinContextE) {
 	var publicArticleForm request.PublishArticleForm
-	err := c.C.ShouldBind(&publicArticleForm)
-	if err != nil {
-		//参数绑定失败
+	//参数绑定校验
+	if err := c.C.ShouldBind(&publicArticleForm); err != nil {
 		c.Response(http.StatusBadRequest, response.API_ERROR, "", nil)
 		return
 	}
+	//获取文章
 	article, err := article_service.GetArticle(publicArticleForm.ArticleId)
 	if err != nil {
 		c.FailWithDetailed(response.API_ERROR, err, "获取文章失败")
 		return
 	}
+	//文章是否符合发布要求
 	if article.Title == "" || article.ContentPath == "" || article.CoverImageURL == "" || len(article.Tags) == 0 {
 		c.FailWithMessage(1, "发布失败")
 		return
 	}
+	// 修改文章状态
 	article.State = 1
-	err = article_service.EditArticle(article.ID, article)
-	if err != nil {
+	if err = article_service.EditArticle(article.ID, article); err != nil {
 		c.FailWithMessage(1, "发布失败")
 		return
 	}
