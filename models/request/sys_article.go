@@ -20,3 +20,11 @@ type ListArticlesForm struct {
 	Offset int `json:"offset,string" valid:"require"`
 	Size   int `json:"size,string" valid:"require"`
 }
+
+type SaveArticleForm struct {
+	Title      string     `json:"title" valid:"require"`
+	CoverImage CoverImage `json:"cover_image,string" valid:"require"`
+	Desc       string     `json:"desc" valid:"require"`
+	Content    string     `json:"content" valid:"require"`
+	Tags       []string   `json:"tags,string" valid:"require"`
+}
