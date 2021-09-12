@@ -15,3 +15,8 @@ type PublishArticleForm struct {
 type DeleteArticleForm struct {
 	ArticleId uint `json:"articleId,string" valid:"require"`
 }
+
+type ListArticlesForm struct {
+	Offset int `json:"offset,string" valid:"require"`
+	Size   int `json:"size,string" valid:"require"`
+}

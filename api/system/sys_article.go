@@ -52,3 +52,22 @@ func (a *ArticleApi) DeleteArticle(c *response.GinContextE) {
 	}
 	c.Ok(0)
 }
+
+func (a *ArticleApi) ListArticles(c *response.GinContextE) {
+	var listArticlesForm request.ListArticlesForm
+	//参数校验与绑定
+	if err := c.C.ShouldBindJSON(&listArticlesForm); err != nil {
+		c.Response(http.StatusBadRequest, response.API_ERROR, "", nil)
+		return
+	}
+	//获取文章并返回
+	if articles, err := article_service.GetArticles(listArticlesForm.Offset, listArticlesForm.Size, map[string]interface{}{}); err == nil {
+		c.OkWithData(0, response.ListArticleResponse{
+			Articles:   articles,
+			TotalCount: len(articles),
+		})
+	} else {
+		c.Fail(1)
+		println(err.Error())
+	}
+}

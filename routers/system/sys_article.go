@@ -12,7 +12,9 @@ type ArticleRouter struct {
 func (s *ArticleRouter) InitArticleRouter(Router *gin.RouterGroup) {
 	systemApi := Router.Group("api/system/article")
 	{
-		systemApi.POST("/listArticles")
+		systemApi.POST("/listArticles", func(c *gin.Context) {
+			api.ApiGroupApp.SystemApiGroup.ListArticles(&response.GinContextE{C: c})
+		})
 		systemApi.POST("/getArticleDetails")
 		systemApi.POST("/searchArticle")
 		systemApi.POST("/saveArticle")
