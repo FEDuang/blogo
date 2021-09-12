@@ -32,7 +32,7 @@ func DeleteArticle(id uint) error {
 
 // EditArticle modify a single article
 func EditArticle(id uint, data interface{}) error {
-	if err := global.GORM.Model(&(models.Article{})).Where(" id  = ? AND deleted_on = ? ", id, 0).Updates(data).Error; err != nil {
+	if err := global.GORM.Model(&(models.Article{})).Where(" id  = ?", id).Updates(data).Error; err != nil {
 		return err
 	}
 	return nil
@@ -41,7 +41,7 @@ func EditArticle(id uint, data interface{}) error {
 // GetArticle Get a single article based on ID
 func GetArticle(id uint) (*models.Article, error) {
 	var article models.Article
-	err := global.GORM.Where("id = ? AND deleted_on = ?", id, 0).First(&article).Error
+	err := global.GORM.Where("id = ?", id).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func GetArticleTotal(maps interface{}) (int64, error) {
 // ExistArticleByID checks if an article exists based on ID
 func ExistArticleByID(id uint) (bool, error) {
 	var article models.Article
-	err := global.GORM.Select("id").Where("id =? AND deleted_on = ?", id, 0).First(&article).Error
+	err := global.GORM.Select("id").Where("id =?", id).First(&article).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}
