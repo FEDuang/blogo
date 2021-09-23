@@ -1,9 +1,12 @@
 package system
 
 import (
+	"blogo/models"
 	"blogo/models/request"
 	"blogo/models/response"
 	"blogo/services/article_service"
+	"blogo/services/tag_service"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -69,5 +72,57 @@ func (a *ArticleApi) ListArticles(c *response.GinContextE) {
 	} else {
 		c.Fail(1)
 		println(err.Error())
+	}
+}
+
+func (a *ArticleApi) SaveArticle(c *response.GinContextE) {
+	var saveArticleForm request.SaveArticleForm
+	//参数校验与绑定
+	if err := c.C.ShouldBindJSON(&saveArticleForm); err != nil {
+		c.Fail(1)
+		return
+	}
+	//校验数据
+	var tags []models.Tag
+	for _, tagName := range saveArticleForm.Tags {
+		//if isl,err := tag_service.ExistTagByName(tagName);err == nil && isl {
+		//	tags = append(tags,models.Tag{Name: tagName})
+		//}else {
+		//	c.FailWithData(1, err)
+		//	return
+		//}
+		err := tag_service.AddTag(tagName)
+		if err != nil {
+			return
+		}
+		tags = append(tags, models.Tag{Name: tagName})
+	}
+
+	//TODO 保存图片
+
+	//将内容写入本地保存
+	fileNamePath := "./articles/" + saveArticleForm.Title
+	contentByte := []byte(saveArticleForm.Content)
+	if err := ioutil.WriteFile(fileNamePath, contentByte, 0666); err != nil {
+		c.FailWithData(1, err)
+		return
+	}
+
+	//构建传输参数
+	articleMap := map[string]interface{}{
+		"title":           saveArticleForm.Title,
+		"desc":            saveArticleForm.Desc,
+		"content_path":    fileNamePath,
+		"state":           uint(0),
+		"cover_image_url": "",
+		"tags":            tags,
+	}
+	//保存
+	if err := article_service.AddArticle(articleMap); err != nil {
+		c.Fail(1)
+		return
+	} else {
+		c.Ok(0)
+		return
 	}
 }

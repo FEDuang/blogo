@@ -17,7 +17,9 @@ func (s *ArticleRouter) InitArticleRouter(Router *gin.RouterGroup) {
 		})
 		systemApi.POST("/getArticleDetails")
 		systemApi.POST("/searchArticle")
-		systemApi.POST("/saveArticle")
+		systemApi.POST("/saveArticle", func(c *gin.Context) {
+			api.ApiGroupApp.SystemApiGroup.SaveArticle(&response.GinContextE{C: c})
+		})
 		systemApi.POST("/publishArticle", func(c *gin.Context) {
 			api.ApiGroupApp.SystemApiGroup.PublishArticle(&response.GinContextE{C: c})
 		})

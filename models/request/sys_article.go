@@ -23,8 +23,8 @@ type ListArticlesForm struct {
 
 type SaveArticleForm struct {
 	Title      string     `json:"title" valid:"require"`
-	CoverImage CoverImage `json:"cover_image,string" valid:"require"`
+	CoverImage CoverImage `json:"cover_image" valid:"require"`
 	Desc       string     `json:"desc" valid:"require"`
 	Content    string     `json:"content" valid:"require"`
-	Tags       []string   `json:"tags,string" valid:"require"`
+	Tags       []string   `json:"tags" valid:"require"`
 }
