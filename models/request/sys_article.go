@@ -28,3 +28,7 @@ type SaveArticleForm struct {
 	Content    string     `json:"content" valid:"require"`
 	Tags       []string   `json:"tags" valid:"require"`
 }
+
+type GetArticleDetails struct {
+	ArticleId int `json:"article_id,string" valid:"require"`
+}
